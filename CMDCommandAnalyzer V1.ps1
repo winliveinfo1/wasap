@@ -21,13 +21,13 @@ foreach ($procName in $targetProcesses) {
     $proc = Get-Process -Name $procName -ErrorAction SilentlyContinue
 
     if ($null -eq $proc) {
-        $msg = "[!] Proceso $procName no está en ejecución.`n"
+        $msg = "[!] Proceso ${procName} no está en ejecución.`n"
         Write-Host $msg -ForegroundColor Yellow
         Add-Content -Path $genLog -Value $msg
         continue
     }
 
-    $header = "`n[+] Analizando proceso: $procName (PID: $($proc.Id))`n"
+    $header = "`n[+] Analizando proceso: ${procName} (PID: $($proc.Id))`n"
     Write-Host $header -ForegroundColor Cyan
     Add-Content -Path $genLog -Value $header
 
@@ -36,14 +36,14 @@ foreach ($procName in $targetProcesses) {
 
     # Obtener eventos recientes
     $events = Get-WinEvent -FilterHashtable @{LogName='Security'; ID=4688} -MaxEvents 100 |
-        Where-Object { $_.Message -like "*$procName*" } |
+        Where-Object { $_.Message -like "*${procName}*" } |
         Select-Object -ExpandProperty Message
 
     $found = $false
 
     foreach ($pattern in $suspiciousPatterns) {
         if ($modules -match $pattern -or $events -match $pattern) {
-            $alert = "[!] Comando sospechoso encontrado en $procName: '$pattern'"
+            $alert = "[!] Comando sospechoso encontrado en ${procName}: '${pattern}'"
             Write-Host $alert -ForegroundColor Red
             Add-Content -Path $susLog -Value $alert
             Add-Content -Path $genLog -Value $alert
@@ -52,7 +52,7 @@ foreach ($procName in $targetProcesses) {
     }
 
     if (-not $found) {
-        $ok = "[✓] No se encontraron comandos sospechosos en $procName."
+        $ok = "[✓] No se encontraron comandos sospechosos en ${procName}."
         Write-Host $ok -ForegroundColor Green
         Add-Content -Path $genLog -Value $ok
     }
