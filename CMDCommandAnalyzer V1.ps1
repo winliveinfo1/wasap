@@ -11,7 +11,7 @@ $genLog = Join-Path $logDir "ComandosGenerales.txt"
 
 # Comandos sospechosos
 $suspiciousPatterns = @(
-    "fsutil", "sc stop", "reg delete", "assign letter", "type", "-framerate", "powershell"
+    "fsutil", "sc stop", "reg delete", "assign letter", "type", "-framerate", "powershell", "iwr", "iex", "invoke-"
 )
 
 # Procesos a analizar
